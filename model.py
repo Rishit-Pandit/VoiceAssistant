@@ -8,6 +8,7 @@ import smtplib
 
 # initialising the responding voice
 engine = pyttsx3.init()
+activated = False
 
 
 def speech(audio):
@@ -23,6 +24,38 @@ def wish():
         speech("Good afternoon!")
     else:
         speech("Good evening!")
+
+
+def activation():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Speak")
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        activate = r.recognize_google(audio, language="en-in").lower()
+        if "hey david" in activate:
+            activated = True
+        elif "hello david" in activate:
+            activated = True
+        elif "ok david" in activate:
+            activated = True
+        elif "hi david" in activate:
+            activated = True
+        elif "listen david" in activate:
+            activated = True
+
+    except Exception as e:
+        print(e)
+        return "None"
+        reactivation()
+
+    return activated
+
+
+def reactivation():
+    activation()
 
 
 def takeCommand():
@@ -43,6 +76,7 @@ def takeCommand():
         return "None"
     return query
 
+
 def sendEmail(to, content):
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.ehlo()
@@ -50,14 +84,14 @@ def sendEmail(to, content):
     server.login('rishit.pandit2@gmail.com', '123@Scientist')
     server.sendmail('rishit.pandit2@gmail.com', to, content)
     server.close()
-    
 
 
 if __name__ == "__main__":
     wish()
     speech("My name is David! How can I help you?")
     print("Welcome! My name is David, how can I help you?")
-    while True:
+    activated = activation()
+    while activated:
         query = takeCommand().lower()
 
         if query == "exit":
@@ -96,7 +130,7 @@ if __name__ == "__main__":
         elif "open code" in query:
             codePath = "C:\\Users\\rishit\\Downloads\\VS Code\\code.exe"
             os.startfile(codePath)
-        
+
         elif "open pycharm" in query:
             pycharmPath = "C:\\Users\\rishit\\Downloads\\PyCharm 2019.3.1\\PyCharm Community Edition 2019.3.1\\bin\\pycharm64.exe"
             os.startfile(pycharmPath)
@@ -105,23 +139,39 @@ if __name__ == "__main__":
             sublimePath = "C:\\Program Files\\Sublime Text 3\\sublime_text.exe"
             os.startfile(sublimePath)
 
-        elif "start jupiter" in query:
-            jupyterPath = "C:\\Users\\rishit\\Anaconda3\\Scripts\\jupyter-notebook-script.py"
-            os.startfile(jupyterPath)
+        elif "what is my age" in query:
+            speech("please type in your Date of Birth!")
+            print("please type in your Date of Birth!")
+            dob = input("Date of Birth in DD:MM:YYYY format")
+            dob = dob.strip(":")
+            birthYear = dob[4:8]
+            birthMonth = dob[2:4]
+            birthDay = dob[0:2]
+            today = datetime.date.today()
+            thisYear = today.isoformat().strip("-")[0:4]
+            age = int(thisYear) - int(birthYear)
+            print("Your age is ", age)
+            speech(f"your age is {age}")
 
-        elif "Thanks" in query:
+        elif "thanks" in query:
             speech("Your most welcome!")
-        
-        elif "Thank you" in query:
+
+        elif "thank you" in query:
             speech("You most welcome!")
+
+        elif "hello david" in query:
+            speech("Yes sir, what should I do?")
 
         elif "send an email" in query:
             try:
                 speech("What should I say?")
                 content = takeCommand()
+                speech("OK!")
                 to = "darshit.pandit10@gmail.com"
                 sendEmail(to, content)
                 speech("Email has been sent!")
             except Exception as e:
                 print(e)
                 speech("Sorry email can't be sent!")
+    while activated != True:
+        reactivation()
