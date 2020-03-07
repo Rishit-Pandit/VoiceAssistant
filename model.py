@@ -8,7 +8,9 @@ import smtplib
 
 # initialising the responding voice
 engine = pyttsx3.init()
-activated = False
+activatedvar = False
+deactivatedvar = False
+on = True
 
 
 def speech(audio):
@@ -24,38 +26,6 @@ def wish():
         speech("Good afternoon!")
     else:
         speech("Good evening!")
-
-
-def activation():
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Speak")
-        r.pause_threshold = 1
-        audio = r.listen(source)
-
-    try:
-        activate = r.recognize_google(audio, language="en-in").lower()
-        if "hey david" in activate:
-            activated = True
-        elif "hello david" in activate:
-            activated = True
-        elif "ok david" in activate:
-            activated = True
-        elif "hi david" in activate:
-            activated = True
-        elif "listen david" in activate:
-            activated = True
-
-    except Exception as e:
-        print(e)
-        return "None"
-        reactivation()
-
-    return activated
-
-
-def reactivation():
-    activation()
 
 
 def takeCommand():
@@ -86,15 +56,14 @@ def sendEmail(to, content):
     server.close()
 
 
-if __name__ == "__main__":
-    wish()
-    speech("My name is David! How can I help you?")
-    print("Welcome! My name is David, how can I help you?")
-    activated = activation()
-    while activated:
+    while True:
         query = takeCommand().lower()
 
-        if query == "exit":
+        wish()
+        speech("My name is David! How can I help you?")
+        print("Welcome! My name is David, how can I help you?")
+
+        if "exit" in query:
             print("Shutting down...")
             speech("Shutting down! Thanks for using me!")
             break
@@ -142,7 +111,7 @@ if __name__ == "__main__":
         elif "what is my age" in query:
             speech("please type in your Date of Birth!")
             print("please type in your Date of Birth!")
-            dob = input("Date of Birth in DD:MM:YYYY format")
+            dob = input("Date of Birth in DDMMYYYY format")
             dob = dob.strip(":")
             birthYear = dob[4:8]
             birthMonth = dob[2:4]
@@ -173,6 +142,3 @@ if __name__ == "__main__":
             except Exception as e:
                 print(e)
                 speech("Sorry email can't be sent!")
-                
-    while activated != True:
-        reactivation()
