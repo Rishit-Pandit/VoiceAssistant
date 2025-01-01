@@ -12,6 +12,13 @@ activatedvar = False
 deactivatedvar = False
 on = True
 
+# Data
+email_address = ""
+password = ""
+
+music_dir = "" # like "C:\\Users\\<user>\\Music'
+ide_path = "" # for `open code editor` command
+
 
 def speech(audio):
     engine.say(audio)
@@ -51,8 +58,8 @@ def sendEmail(to, content):
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.ehlo()
     server.starttls()
-    server.login('rishit.pandit2@gmail.com', '123@Scientist')
-    server.sendmail('rishit.pandit2@gmail.com', to, content)
+    server.login(email_address, password)
+    server.sendmail(email_address, to, content)
     server.close()
 
 
@@ -86,27 +93,17 @@ def sendEmail(to, content):
             webbrowser.open("mail.google.com")
 
         elif "play music" in query:
-            musicDir = "C:\\Users\\rishit\\Music"
-            songs = os.listdir(musicDir)
+            songs = os.listdir(music_dir)
             print(songs)
-            os.startfile(os.path.join(musicDir, songs[0]))
+            os.startfile(os.path.join(music_dir, songs[0]))
 
         elif "what is the time" in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
             print(f"The time is {strTime}")
             speech(f"The time is {strTime}")
 
-        elif "open code" in query:
-            codePath = "C:\\Users\\rishit\\Downloads\\VS Code\\code.exe"
-            os.startfile(codePath)
-
-        elif "open pycharm" in query:
-            pycharmPath = "C:\\Users\\rishit\\Downloads\\PyCharm 2019.3.1\\PyCharm Community Edition 2019.3.1\\bin\\pycharm64.exe"
-            os.startfile(pycharmPath)
-
-        elif "open sublime text" in query:
-            sublimePath = "C:\\Program Files\\Sublime Text 3\\sublime_text.exe"
-            os.startfile(sublimePath)
+        elif "open code editor" in query:
+            os.startfile(ide_path)
 
         elif "what is my age" in query:
             speech("please type in your Date of Birth!")
@@ -122,23 +119,21 @@ def sendEmail(to, content):
             print("Your age is ", age)
             speech(f"your age is {age}")
 
-        elif "thanks" in query:
+        elif "thanks" in query or "thank you" in query:
             speech("Your most welcome!")
 
-        elif "thank you" in query:
-            speech("You most welcome!")
-
         elif "hello david" in query:
-            speech("Yes sir, what should I do?")
+            speech("Yes, what should I do?")
 
         elif "send an email" in query:
             try:
+                speech("To whom?")
+                to = takeCommand()
                 speech("What should I say?")
                 content = takeCommand()
                 speech("OK!")
-                to = "darshit.pandit10@gmail.com"
                 sendEmail(to, content)
                 speech("Email has been sent!")
             except Exception as e:
                 print(e)
-                speech("Sorry email can't be sent!")
+                speech("Sorry the email couldn't be sent!")
